@@ -1,4 +1,4 @@
-// index.js
+// backend/index.js
 
 import dotenv from "dotenv";
 dotenv.config(); // Load env vars FIRST
@@ -7,7 +7,7 @@ import { connectDB } from "./database/db.js";
 import { v2 as cloudinary } from "cloudinary";
 import { app } from "./app.js";
 
-// Configure Cloudinary
+// ✅ Cloudinary Config
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
   api_key: process.env.CLOUDINARY_CLIENT_API,
@@ -15,12 +15,15 @@ cloudinary.config({
   secure: true,
 });
 
-// Connect to DB and then start server
+// ✅ Start Server
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(process.env.PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${process.env.PORT}`);
+
+    const port = process.env.PORT || 4000;
+
+    app.listen(port, () => {
+      console.log(`🚀 Server is running at http://localhost:${port}`);
     });
   } catch (err) {
     console.error("❌ Failed to start server:", err);
