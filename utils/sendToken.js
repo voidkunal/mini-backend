@@ -1,22 +1,19 @@
-// utils/sendToken.js
-
 export const sendToken = (user, statusCode, message, res) => {
-  const token = user.generateToken(); // or user.getJwtToken()
+  try {
+    const token = user.generateToken();
 
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Required for HTTPS
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Allow cross-origin
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-  };
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    };
 
-  res
-    .status(statusCode)
-    .cookie("token", token, cookieOptions)
-    .json({
-      success: true,
-      message,
-      user,
-      token,
-    });
+    res.status(statusCode)
+      .cookie("token", token, cookieOptions)
+      .json({ success: true, message, user, token });
+  } catch (err) {
+    console.error("🔴 sendToken Error:", err);
+    res.status(500).json({ success: false, message: "Token generation failed" });
+  }
 };

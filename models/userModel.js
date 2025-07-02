@@ -1,82 +1,39 @@
-
-
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  role: {
-    type: String,
-    enum: ["user", "Admin"],
-    default: "user",
-  },
-  accountVerified: {
-    type: Boolean,
-    default: false,
-  },
-
-  // ✅ Updated field: borrowedBooks (not borrowedVideos)
-  borrowedBooks: [
-    {
-      bookId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Book",
-        required: true,
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, lowercase: true },
+    password: { type: String, required: true, select: false },
+    role: { type: String, enum: ["user", "Admin"], default: "user" },
+    accountVerified: { type: Boolean, default: false },
+    borrowedBooks: [
+      {
+        bookId: { type: mongoose.Schema.Types.ObjectId, ref: "Book", required: true },
+        returned: { type: Boolean, default: false },
+        bookTitle: String,
+        borrowedDate: Date,
+        dueDate: Date,
       },
-      returned: {
-        type: Boolean,
-        default: false,
-      },
-      bookTitle: String,
-      borrowedDate: Date,
-      dueDate: Date,
-    },
-  ],
-
-  avatar: {
-    public_id: String,
-    url: String,
+    ],
+    avatar: { public_id: String, url: String },
+    verificationCode: Number,
+    verificationCodeExpire: Date,
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
-  verificationCode: {
-    type: Number,
-  },
-  verificationCodeExpire: {
-    type: Date,
-  },
-  resetPasswordToken: {
-    type: String,
-  },
-  resetPasswordExpire: {
-    type: Date,
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 userSchema.methods.generateVerificationCode = function () {
-  function generateRandomFiveDigitNumber() {
-    const firstDigit = Math.floor(Math.random() * 9) + 1;
-    const remainingDigits = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
-    return parseInt(firstDigit + remainingDigits);
-  }
-
-  const verificationCode = generateRandomFiveDigitNumber();
-  this.verificationCode = verificationCode;
+  const firstDigit = Math.floor(Math.random() * 9) + 1;
+  const remaining = Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+  const code = parseInt(firstDigit + remaining);
+  this.verificationCode = code;
   this.verificationCodeExpire = Date.now() + 4 * 60 * 1000;
-  return verificationCode;
+  return code;
 };
 
 userSchema.methods.generateToken = function () {
@@ -87,12 +44,7 @@ userSchema.methods.generateToken = function () {
 
 userSchema.methods.getResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(20).toString("hex");
-
-  this.resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-
+  this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
