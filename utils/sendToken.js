@@ -1,15 +1,13 @@
 // utils/sendToken.js
 
 export const sendToken = (user, statusCode, message, res) => {
-  const token = user.generateToken();
+  const token = user.generateToken(); // or user.getJwtToken()
 
   const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-    ),
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Only true on HTTPS
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: process.env.NODE_ENV === "production", // Required for HTTPS
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Allow cross-origin
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
   };
 
   res
