@@ -5,7 +5,7 @@ import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 import sendEmail from "../utils/sendEmail.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
 import { sendToken } from "../utils/sendToken.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../middlewares/errorMiddlewares.js";
 import { User } from "../models/userModel.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
