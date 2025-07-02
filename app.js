@@ -1,5 +1,3 @@
-// app.js
-
 import express from "express";
 import { config } from "dotenv";
 import cors from "cors";
@@ -29,8 +27,8 @@ config({ path: "./config/config.env" });
 // ✅ Middlewares
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    credentials: true,
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Allow localhost in development
+    credentials: true, // Allow credentials (cookies) to be sent
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
