@@ -1,7 +1,7 @@
 // controllers/bookController.js
 
 import { Book } from "../models/bookModel.js";
-import { catchAsyncErrors } from "../middlewares/catchAsyncErrors.js";
+import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import ErrorHandler from "../middlewares/errorMiddlewares.js";
 import fs from "fs/promises";
 import path from "path";
