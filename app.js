@@ -47,8 +47,8 @@ app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/borrow", borrowRouter);
 app.use("/api/v1/user", userRouter);
 
-// ✅ 404 Fallback Route
-app.use("*", (req, res) => {
+// ✅ 404 Fallback Route (⚠️ Express v5 safe version)
+app.all("*", (req, res) => {
   res.status(404).json({ success: false, message: "API route not found" });
 });
 
