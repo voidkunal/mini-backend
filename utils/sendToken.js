@@ -1,10 +1,12 @@
+// utils/sendToken.js
+
 export const sendToken = (user, statusCode, message, res) => {
   const token = user.generateToken();
 
   const cookieOptions = {
     httpOnly: true,
-    secure: true, // Required for HTTPS
-    sameSite: "None", // Required for cross-site cookie
+    secure: true,           // Use HTTPS only
+    sameSite: "None",       // Allow cross-site
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   };
 
@@ -13,7 +15,6 @@ export const sendToken = (user, statusCode, message, res) => {
     .json({
       success: true,
       message,
-      token,
-      user,
+      user,               // ✅ Only user info, NOT token
     });
 };
