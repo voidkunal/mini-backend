@@ -4,7 +4,7 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
 
-// ========== Get All Verified Users ==========
+
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find({ accountVerified: true });
   res.status(200).json({
@@ -13,7 +13,7 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ========== Register New Admin ==========
+
 export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
   if (!req.files || !req.files.avatar) {
     return next(new ErrorHandler("Please upload an avatar image", 400));
@@ -34,7 +34,7 @@ export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Password must be between 6 to 10 characters", 400));
   }
 
-  const { avatar } = req.files;
+  const avatar = req.files.avatar;
   const allowedFormats = ["image/jpeg", "image/jpg", "image/png"];
 
   if (!allowedFormats.includes(avatar.mimetype)) {
@@ -71,7 +71,7 @@ export const registerNewAdmin = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ========== Update User Avatar ==========
+
 export const updateAvatar = catchAsyncErrors(async (req, res, next) => {
   if (!req.files || !req.files.avatar) {
     return next(new ErrorHandler("Please upload an avatar image", 400));

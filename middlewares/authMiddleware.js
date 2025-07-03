@@ -1,24 +1,40 @@
-import catchAsyncErrors from "./catchAsyncErrors.js";
-import ErrorHandler from "../middlewares/errorMiddlewares.js";
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
+import catchAsyncErrors from "./catchAsyncErrors.js";
+import ErrorHandler from "./errorMiddlewares.js";
 
+// Middleware to check if user is authenticated
 export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   const { token } = req.cookies;
-  if (!token) return next(new ErrorHandler("User is not authenticated", 401));
 
-  const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  req.user = await User.findById(decodedData.id);
+  if (!token) {
+    return next(new ErrorHandler("User is not authenticated", 401));
+  }
 
-  if (!req.user) return next(new ErrorHandler("User not found", 404));
-  next();
+  try {
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await User.findById(decodedData.id);
+
+    if (!user) {
+      return next(new ErrorHandler("User not found", 404));
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return next(new ErrorHandler("Invalid or expired token", 401));
+  }
 });
 
+// Middleware to check if user has required role(s)
 export const isAuthorized = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!req.user || !roles.includes(req.user.role)) {
       return next(
-        new ErrorHandler(`Role (${req.user.role}) is not allowed to access this resource.`, 403)
+        new ErrorHandler(
+          `Role (${req.user?.role}) is not allowed to access this resource.`,
+          403
+        )
       );
     }
     next();

@@ -1,5 +1,3 @@
-// routes/userRouter.js
-
 import express from "express";
 import {
   getAllUsers,
@@ -14,7 +12,7 @@ import { imageUpload } from "../middlewares/imageUpload.js";
 
 const router = express.Router();
 
-// ========== Admin: Register a New Admin ==========
+
 router.post(
   "/add/new-Admin",
   isAuthenticated,
@@ -23,7 +21,7 @@ router.post(
   registerNewAdmin
 );
 
-// ========== Admin: Get All Users ==========
+
 router.get(
   "/all",
   isAuthenticated,
@@ -31,7 +29,7 @@ router.get(
   getAllUsers
 );
 
-// ========== User: Update Avatar ==========
+
 router.put(
   "/update-avatar",
   isAuthenticated,
