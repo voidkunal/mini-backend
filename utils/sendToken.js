@@ -3,9 +3,9 @@ export const sendToken = (user, statusCode, message, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: true,           // Required for HTTPS (e.g., Vercel deployment)
-    sameSite: "None",       // Allow cross-origin requests
-    maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
   };
 
   res
@@ -14,7 +14,7 @@ export const sendToken = (user, statusCode, message, res) => {
     .json({
       success: true,
       message,
-      token,     // Optional: send token in JSON for frontend use (not required if using cookie only)
-      user,      // Send user data (e.g., name, role, etc.)
+      token,
+      user,
     });
 };
