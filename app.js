@@ -22,13 +22,11 @@ const __dirname = path.dirname(__filename);
 export const app = express();
 config({ path: "./config/config.env" });
 
-app.use(
-  cors({
-    origin: "https://mini-frontend-green.vercel.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors({
+  origin: "https://mini-frontend-green.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
 
 app.use(cookieParser());
 app.use(express.json());
