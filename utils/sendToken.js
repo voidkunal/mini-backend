@@ -3,13 +3,12 @@ export const sendToken = (user, statusCode, message, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: true, // Required for HTTPS
+    sameSite: "None", // Required for cross-site cookie
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   };
 
-  res
-    .status(statusCode)
+  res.status(statusCode)
     .cookie("token", token, cookieOptions)
     .json({
       success: true,
