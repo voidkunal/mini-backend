@@ -10,10 +10,9 @@ export const sendToken = (user, statusCode, message, res) => {
     .status(statusCode)
     .cookie("token", token, {
       httpOnly: true,
-      secure: inProd,
-      sameSite: inProd ? "None" : "Lax",
-      maxAge: 24 * 60 * 60 * 1000,
-      path: "/",
+      secure: process.env.NODE_ENV === "production", // ✅ important for Vercel
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ✅ allow cross-origin cookies
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
     .json({
       success: true,
