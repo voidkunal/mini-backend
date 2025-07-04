@@ -1,4 +1,3 @@
-// backend/app.js
 import express from "express";
 import { config } from "dotenv";
 import cors from "cors";
@@ -22,6 +21,8 @@ const __dirname = path.dirname(__filename);
 export const app = express();
 config({ path: "./config/config.env" });
 
+app.set("trust proxy", 1); // ✅ TRUST RENDER'S PROXY TO SET SECURE COOKIES
+
 app.use(cors({
   origin: "https://mini-frontend-green.vercel.app",
   credentials: true,
@@ -33,21 +34,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// API Routes — only once!
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/book", bookRouter);
 app.use("/api/v1/borrow", borrowRouter);
 app.use("/api/v1/user", userRouter);
 
-// 404 handler
 app.all("*", (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "API route not found",
-  });
+  res.status(404).json({ success: false, message: "API route not found" });
 });
 
-// Multer errors
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     return res.status(400).json({ success: false, message: err.message });
@@ -55,9 +50,7 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-// General error middleware
 app.use(errorMiddleware);
 
-// Background jobs
 notifyUsers();
 removeUnverifiedAccounts();
