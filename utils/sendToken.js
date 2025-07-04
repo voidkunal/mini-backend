@@ -40,6 +40,7 @@ res.cookie("token", token, {
       success: true,
     message,
     user,
+    token,
     });
 };
 
