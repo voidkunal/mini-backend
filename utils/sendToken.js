@@ -38,7 +38,8 @@ res.cookie("token", token, {
 })
 .json({
       success: true,
-      message,
-      user,
+    message,
+    user,
     });
 };
+
