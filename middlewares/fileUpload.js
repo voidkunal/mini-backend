@@ -1,16 +1,20 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import ErrorHandler from "./errorMiddlewares.js";
+import { fileURLToPath } from "url";
 
-// ========== Ensure Upload Directory Exists ==========
-const uploadPath = "uploads/books/";
+// Setup __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ======= Absolute Upload Path ========
+const uploadPath = path.join(__dirname, "../uploads/books");
 
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-// ========== Multer Storage Engine ==========
+// ======= Multer Storage ========
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadPath);
@@ -21,7 +25,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// ========== File Type Filter ==========
+// ======= File Type Filter ========
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /pdf|jpg|jpeg|png/;
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -30,11 +34,11 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb(new ErrorHandler("Only PDF, JPG, JPEG, PNG files are allowed", 400));
+    cb(new Error("Only PDF, JPG, JPEG, PNG files are allowed"));
   }
 };
 
-// ========== Multer Upload Middleware ==========
+// ======= Upload Middleware Export ========
 const upload = multer({
   storage,
   fileFilter,

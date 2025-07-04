@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const bookSchema = new mongoose.Schema(
@@ -31,9 +30,9 @@ const bookSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    filePath: {
+    fileData: { // ✅ This matches what controller and frontend expect
       type: String,
-      required: true, // This stores the local file path (PDF/image)
+      required: true,
     },
     fileType: {
       type: String,
