@@ -25,7 +25,9 @@ export const addBook = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Only PDF, JPG, JPEG, PNG files are allowed", 400));
   }
 
-  const filePath = path.resolve(req.file.path);
+  // const filePath = path.resolve(req.file.path);
+  const filePath = req.file.filename; // ✅ saves only filename (like "mybook.pdf")
+
 
   const book = await Book.create({
     title,
