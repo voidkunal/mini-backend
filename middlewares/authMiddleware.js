@@ -44,15 +44,22 @@
 
 // middlewares/authMiddleware.js
 
+
 import jwt from "jsonwebtoken";
 import { User } from "../models/userModel.js";
 import catchAsyncErrors from "./catchAsyncErrors.js";
 import ErrorHandler from "./errorMiddlewares.js";
 
-// ✅ Auth check using Authorization header
+// Middleware to check if user is authenticated
 export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
+  // If no token and route is logout → allow it
+  if ((!authHeader || !authHeader.startsWith("Bearer ")) && req.path === "/auth/logout") {
+    return next();
+  }
+
+  // No token and not logout → block
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return next(new ErrorHandler("User is not authenticated", 401));
   }
@@ -70,11 +77,16 @@ export const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
+    // Token invalid → allow only logout to pass
+    if (req.path === "/auth/logout") {
+      return next();
+    }
+
     return next(new ErrorHandler("Invalid or expired token", 401));
   }
 });
 
-// ✅ Role-based access
+// Middleware to check if user has required role(s)
 export const isAuthorized = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
