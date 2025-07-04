@@ -26,7 +26,7 @@ export const addBook = catchAsyncErrors(async (req, res, next) => {
   }
 
   // const filePath = path.resolve(req.file.path);
-  const filePath = req.file.filename; // ✅ saves only filename (like "mybook.pdf")
+  const filePath = req.file.filename; 
 
 
   const book = await Book.create({
